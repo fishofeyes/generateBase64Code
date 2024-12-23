@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   TextEditingController _lenthVC = TextEditingController();
   final ascCode = AsciiCodec();
   List<String> randomList = [];
+  int intTab = 0; // 0: dart 1: swift, 2: kotlin
   @override
   void initState() {
     super.initState();
@@ -44,9 +45,24 @@ class _HomePageState extends State<HomePage> {
     final encodeStr = str.substring(0, idx) + t + str.substring(idx);
     setState(() {
       result = encodeStr;
-      useStr = 'utf8.decode(base64Decode("".replaceAll("$randomStr", "")))';
-      useDetailStr =
-          'utf8.decode(base64Decode("$encodeStr".replaceAll("$randomStr", "")))';
+      switch (intTab) {
+        case 0:
+          useStr = 'utf8.decode(base64Decode("".replaceAll("$randomStr", "")))';
+          useDetailStr =
+              'utf8.decode(base64Decode("$encodeStr".replaceAll("$randomStr", "")))';
+          break;
+        case 1:
+          useStr =
+              'String(data: Data(base64Encoded: "".replacingOccurrences(of: "$randomStr", with: ""))!, encoding: .utf8)';
+          useDetailStr =
+              'String(data: Data(base64Encoded: "$encodeStr".replacingOccurrences(of: "$randomStr", with: ""))!, encoding: .utf8)';
+          break;
+        case 2:
+          useStr = 'String(Base64.decode("".replace("$randomStr", ""), 0))';
+          useDetailStr =
+              'String(Base64.decode("$encodeStr".replace("$randomStr", ""), 0))';
+          break;
+      }
     });
   }
 
@@ -275,6 +291,20 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               const SizedBox(height: 16),
+                              DefaultTabController(
+                                length: 3,
+                                child: TabBar(
+                                  tabs: [
+                                    Tab(text: "Dart"),
+                                    Tab(text: "Swift"),
+                                    Tab(text: "Kotlin"),
+                                  ],
+                                  onTap: (e) {
+                                    intTab = e;
+                                    _convert();
+                                  },
+                                ),
+                              ),
                               Text(
                                 "use empty str:",
                                 style: TextStyle(
