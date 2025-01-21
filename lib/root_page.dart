@@ -1,4 +1,5 @@
 import 'package:custom_base64/page/base64/base64_page.dart';
+import 'package:custom_base64/page/paseEnum/parse_enum_page.dart';
 import 'package:flutter/material.dart';
 
 class RootPage extends StatefulWidget {
@@ -47,7 +48,7 @@ class _RootPageState extends State<RootPage>
                 controller: controller,
                 children: [
                   Base64Page(),
-                  Container(),
+                  ParseEnumPage(),
                 ],
               ),
             )
