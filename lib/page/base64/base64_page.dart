@@ -1,24 +1,25 @@
 import 'dart:convert';
 import 'dart:math';
 
+import 'package:custom_base64/page/base64/view/my_input.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class Base64Page extends StatefulWidget {
+  const Base64Page({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Base64Page> createState() => _Base64PageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _Base64PageState extends State<Base64Page> {
   String result = "";
   String randomStr = "";
   String useStr = "";
   String useDetailStr = "";
-  TextEditingController _inputController = TextEditingController();
-  TextEditingController _lenthVC = TextEditingController();
-  final ascCode = AsciiCodec();
+  final TextEditingController _inputController = TextEditingController();
+  final TextEditingController _lengthVC = TextEditingController();
+  final ascCode = const AsciiCodec();
   List<String> randomList = [];
   int intTab = 0; // 0: dart 1: swift, 2: kotlin
   @override
@@ -29,7 +30,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void dispose() {
     _inputController.dispose();
-    _lenthVC.dispose();
+    _lengthVC.dispose();
     super.dispose();
   }
 
@@ -93,7 +94,8 @@ class _HomePageState extends State<HomePage> {
     int length = 10;
     randomList.clear();
     for (int i = 0; i < length; i++) {
-      final str = _generateRandomStringSecure(int.tryParse(_lenthVC.text) ?? 0);
+      final str =
+          _generateRandomStringSecure(int.tryParse(_lengthVC.text) ?? 0);
       randomList.add(str);
     }
     randomStr = randomList.first;
@@ -126,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const Text(
-                            "Content",
+                            "Random string length",
                             style: TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
@@ -137,33 +139,17 @@ class _HomePageState extends State<HomePage> {
                           Row(
                             children: [
                               Expanded(
-                                child: TextField(
-                                  controller: _lenthVC,
-                                  inputFormatters: [
+                                child: MyInput(
+                                  controller: _lengthVC,
+                                  hintText: "random length default: 10",
+                                  formatter: [
                                     FilteringTextInputFormatter.digitsOnly
                                   ],
-                                  decoration: InputDecoration(
-                                    hintText: "random length default: 10",
-                                    hintStyle:
-                                        const TextStyle(color: Colors.grey),
-                                    focusedBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                      borderSide: BorderSide(
-                                        color: Colors.black.withOpacity(0.16),
-                                      ),
-                                    ),
-                                    enabledBorder: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(16),
-                                      borderSide: BorderSide(
-                                        color: Colors.black.withOpacity(0.16),
-                                      ),
-                                    ),
-                                  ),
                                 ),
                               ),
                               IconButton(
                                 onPressed: _generateStr,
-                                icon: Icon(Icons.check_circle),
+                                icon: const Icon(Icons.check_circle),
                               ),
                             ],
                           ),
@@ -174,7 +160,7 @@ class _HomePageState extends State<HomePage> {
                                 const Text("Random string: "),
                                 Text(
                                   randomStr,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 18, color: Colors.red),
                                 ),
                               ],
@@ -212,25 +198,10 @@ class _HomePageState extends State<HomePage> {
                             ],
                           ),
                           const SizedBox(height: 16),
-                          TextField(
-                            maxLines: 5,
+                          MyInput(
                             controller: _inputController,
-                            decoration: InputDecoration(
-                              hintText: "paste content",
-                              hintStyle: const TextStyle(color: Colors.grey),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(
-                                  color: Colors.black.withOpacity(0.16),
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(16),
-                                borderSide: BorderSide(
-                                  color: Colors.black.withOpacity(0.16),
-                                ),
-                              ),
-                            ),
+                            maxLine: 5,
+                            hintText: "Paste content",
                           ),
                           const SizedBox(height: 12),
                           InkWell(
@@ -294,7 +265,7 @@ class _HomePageState extends State<HomePage> {
                               DefaultTabController(
                                 length: 3,
                                 child: TabBar(
-                                  tabs: [
+                                  tabs: const [
                                     Tab(text: "Dart"),
                                     Tab(text: "Swift"),
                                     Tab(text: "Kotlin"),
@@ -305,7 +276,7 @@ class _HomePageState extends State<HomePage> {
                                   },
                                 ),
                               ),
-                              Text(
+                              const Text(
                                 "use empty str:",
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w600),
@@ -315,7 +286,7 @@ class _HomePageState extends State<HomePage> {
                                   Flexible(
                                     child: Text(
                                       useStr,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 14, color: Colors.black),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
@@ -331,7 +302,7 @@ class _HomePageState extends State<HomePage> {
                                 ],
                               ),
                               const SizedBox(height: 16),
-                              Text(
+                              const Text(
                                 "use detail str:",
                                 style: TextStyle(
                                     fontSize: 16, fontWeight: FontWeight.w600),
@@ -341,7 +312,7 @@ class _HomePageState extends State<HomePage> {
                                   Flexible(
                                     child: Text(
                                       useDetailStr,
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 14, color: Colors.black),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 5,
