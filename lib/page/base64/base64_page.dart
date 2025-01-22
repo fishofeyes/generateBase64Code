@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:custom_base64/page/base64/view/my_input.dart';
+import 'package:custom_base64/tool/global.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -21,7 +22,7 @@ class _Base64PageState extends State<Base64Page> {
   final TextEditingController _lengthVC = TextEditingController();
   final ascCode = const AsciiCodec();
   List<String> randomList = [];
-  int intTab = 0; // 0: dart 1: swift, 2: kotlin
+  CodeEnum intTab = CodeEnum.dart; // 0: dart 1: swift, 2: kotlin
   @override
   void initState() {
     super.initState();
@@ -47,18 +48,18 @@ class _Base64PageState extends State<Base64Page> {
     setState(() {
       result = encodeStr;
       switch (intTab) {
-        case 0:
+        case CodeEnum.dart:
           useStr = 'utf8.decode(base64Decode("".replaceAll("$randomStr", "")))';
           useDetailStr =
               'utf8.decode(base64Decode("$encodeStr".replaceAll("$randomStr", "")))';
           break;
-        case 1:
+        case CodeEnum.swift:
           useStr =
               'String(data: Data(base64Encoded: "".replacingOccurrences(of: "$randomStr", with: ""))!, encoding: .utf8)';
           useDetailStr =
               'String(data: Data(base64Encoded: "$encodeStr".replacingOccurrences(of: "$randomStr", with: ""))!, encoding: .utf8)';
           break;
-        case 2:
+        case CodeEnum.kotlin:
           useStr = 'String(Base64.decode("".replace("$randomStr", ""), 0))';
           useDetailStr =
               'String(Base64.decode("$encodeStr".replace("$randomStr", ""), 0))';
@@ -68,13 +69,7 @@ class _Base64PageState extends State<Base64Page> {
   }
 
   void _copy(String text) {
-    Clipboard.setData(ClipboardData(text: text));
-    const snackBar = SnackBar(
-      content: Text('Copy successfully!'),
-      showCloseIcon: true,
-    );
-
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    myCopy(context, text);
   }
 
   String _generateRandomStringSecure(int length) {
@@ -189,7 +184,7 @@ class _Base64PageState extends State<Base64Page> {
                                     ),
                                     IconButton(
                                       onPressed: () => _copy(e),
-                                      icon: Icon(Icons.copy),
+                                      icon: const Icon(Icons.copy),
                                       iconSize: 14,
                                     )
                                   ],
@@ -265,13 +260,13 @@ class _Base64PageState extends State<Base64Page> {
                               DefaultTabController(
                                 length: 3,
                                 child: TabBar(
-                                  tabs: const [
-                                    Tab(text: "Dart"),
-                                    Tab(text: "Swift"),
-                                    Tab(text: "Kotlin"),
-                                  ],
+                                  tabs: CodeEnum.values
+                                      .map((e) => Tab(
+                                            text: e.name,
+                                          ))
+                                      .toList(),
                                   onTap: (e) {
-                                    intTab = e;
+                                    intTab = CodeEnum.values[e];
                                     _convert();
                                   },
                                 ),
