@@ -11,7 +11,7 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  final List<String> text = ["base64混入字符", "埋点枚举生成"];
+  final List<String> text = ["base64混入字符", "埋点事件枚举生成"];
   late TabController controller;
   @override
   void initState() {

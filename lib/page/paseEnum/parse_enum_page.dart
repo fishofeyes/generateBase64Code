@@ -5,13 +5,7 @@ import 'package:custom_base64/tool/global.dart';
 import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
-import 'package:flutter_highlight/themes/darcula.dart';
-import 'package:flutter_highlight/themes/dark.dart';
-import 'package:flutter_highlight/themes/github.dart';
-import 'package:flutter_highlight/themes/lightfair.dart';
-import 'package:flutter_highlight/themes/vs.dart';
 import 'package:flutter_highlight/themes/vs2015.dart';
-import 'package:flutter_highlight/themes/xcode.dart';
 
 class ParseEnumPage extends StatefulWidget {
   const ParseEnumPage({super.key});
