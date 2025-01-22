@@ -10,7 +10,7 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   final List<String> text = ["base64混入字符", "埋点枚举生成"];
   late TabController controller;
   @override
@@ -46,7 +46,7 @@ class _RootPageState extends State<RootPage>
             Expanded(
               child: TabBarView(
                 controller: controller,
-                children: [
+                children: const [
                   Base64Page(),
                   ParseEnumPage(),
                 ],
@@ -57,4 +57,7 @@ class _RootPageState extends State<RootPage>
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

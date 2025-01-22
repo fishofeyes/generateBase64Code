@@ -13,7 +13,8 @@ class Base64Page extends StatefulWidget {
   State<Base64Page> createState() => _Base64PageState();
 }
 
-class _Base64PageState extends State<Base64Page> {
+class _Base64PageState extends State<Base64Page>
+    with AutomaticKeepAliveClientMixin {
   String result = "";
   String randomStr = "";
   String useStr = "";
@@ -336,4 +337,7 @@ class _Base64PageState extends State<Base64Page> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }

@@ -20,7 +20,8 @@ class ParseEnumPage extends StatefulWidget {
   State<ParseEnumPage> createState() => _ParseEnumPageState();
 }
 
-class _ParseEnumPageState extends State<ParseEnumPage> {
+class _ParseEnumPageState extends State<ParseEnumPage>
+    with AutomaticKeepAliveClientMixin {
   List<DropItem> _list = [];
 
   bool _dragging = false;
@@ -225,4 +226,7 @@ class _ParseEnumPageState extends State<ParseEnumPage> {
       ),
     );
   }
+
+  @override
+  bool get wantKeepAlive => true;
 }
