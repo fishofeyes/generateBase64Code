@@ -157,6 +157,14 @@ class _ParseEnumPageState extends State<ParseEnumPage>
                       onSelected: _onSelect,
                       dropdownMenuEntries: _buildMenuList(data),
                     ),
+                    const Text(
+                      "注意：1. 需要自行过滤未使用的埋点枚举。\n2. 自行修改类名，变量名。防止代码重复",
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.red,
+                      ),
+                    ),
                   ],
                 ),
               ),

@@ -64,7 +64,7 @@ class _ApiPageState extends State<ApiPage> with AutomaticKeepAliveClientMixin {
         res = tool.createDartApiEnum(content.split("\n"));
         break;
       case CodeEnum.swift:
-        // res = tool.parseSwift(currProjectName);
+        res = tool.createDartApiEnum(content.split("\n"));
         break;
       case CodeEnum.kotlin:
         // res = tool.parseKotlin(currProjectName);
@@ -73,6 +73,44 @@ class _ApiPageState extends State<ApiPage> with AutomaticKeepAliveClientMixin {
     }
     enumCode = res.join("\n");
     setState(() {});
+  }
+
+  String _getHintText() {
+    switch (intTab) {
+      case CodeEnum.dart:
+        return '''
+dart example:
+enum NetworkServiceApi {
+  openPage("/v1/app/open/data", ""), // 类名可自行修改
+  openDec("/v1/app/open/file/", ""),
+  playUrl("/v1/app/download/file/", ""),
+  appPost("/v1/app/events", ""),
+  ;
+  final String desc;
+  final String val;
+  const NetworkServiceApi(this.desc, this.val);
+}
+                        ''';
+      case CodeEnum.kotlin:
+        return '''
+kotlin example：
+enum class MyEnum(val api: String, val id: String) {
+    openPage("/v1/app/open/data", ""), // 类名可自行修改
+    openDec("/v1/app/open/file/", ""),
+    playUrl("/v1/app/download/file/", ""),
+    appPost("/v1/app/events", ""),
+}
+        ''';
+      case CodeEnum.swift:
+        return '''
+struct MyEnum {
+    static let openPage = ("/v1/app/open/data", "") // 类名可自行修改
+    static let openDec = ("/v1/app/open/file/", "")
+    static let playUrl = ("/v1/app/download/file/", "")
+    static let appPost = ("/v1/app/events", "")
+}
+        ''';
+    }
   }
 
   @override
@@ -190,19 +228,7 @@ class _ApiPageState extends State<ApiPage> with AutomaticKeepAliveClientMixin {
                       MyInput(
                         maxLine: 10,
                         controller: _controller,
-                        hintText: '''
-dart example:
-enum NetworkServiceApi {
-  openPage("/v1/app/open/data", ""),
-  openDec("/v1/app/open/file/", ""),
-  playUrl("/v1/app/download/file/", ""),
-  appPost("/v1/app/events", ""),
-  ;
-  final String desc;
-  final String val;
-  const NetworkServiceApi(this.desc, this.val);
-}
-                        ''',
+                        hintText: _getHintText(),
                       ),
                       const SizedBox(height: 12),
                       InkWell(
