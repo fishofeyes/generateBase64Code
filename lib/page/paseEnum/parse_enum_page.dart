@@ -35,7 +35,7 @@ class _ParseEnumPageState extends State<ParseEnumPage>
     super.dispose();
   }
 
-  void _initCsv() {
+  void _initCsv() async {
     if (_list.isNotEmpty) {
       final f = _list.first;
       if (f.name.toLowerCase().endsWith("csv") == false) {
@@ -55,8 +55,10 @@ class _ParseEnumPageState extends State<ParseEnumPage>
             });
         return;
       }
-      final p = File(f.path);
-      final lines = p.readAsLinesSync();
+      // final p = File(f.path);
+      // final lines = await p.readAsLines();
+      final p = await f.readAsString();
+      final lines = p.split("\n");
       tool.init(lines);
       if (lines.isNotEmpty) {
         final temp = lines.first.split(",");

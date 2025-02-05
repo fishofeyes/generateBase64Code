@@ -7,10 +7,7 @@ class CsvTool {
   CsvTool();
 
   /// 解析接口对应对应的字符-header里面需要用到
-  Future<void> parseApiIdObs(String path) async {
-    final file = File(path); // 替换为你的 CSV 文件路径
-    final contents = await file.readAsString();
-    final lines = contents.split('\n');
+  Future<void> parseApiIdObs(List<String> lines) async {
     for (final line in lines) {
       final fields = line.split(',');
       if (fields.length < 3) {
@@ -27,10 +24,7 @@ class CsvTool {
     }
   }
 
-  Future<void> parse({required String path, bool isApi = false}) async {
-    final file = File(path); // 替换为你的 CSV 文件路径
-    final contents = await file.readAsString();
-    final lines = contents.split('\n');
+  Future<void> parse({required List<String> lines, bool isApi = false}) async {
     int i = 0;
     for (final line in lines) {
       if (i == 0) {

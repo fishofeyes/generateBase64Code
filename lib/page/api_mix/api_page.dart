@@ -48,10 +48,12 @@ class _ApiPageState extends State<ApiPage> with AutomaticKeepAliveClientMixin {
     if (_apiFile == null) return;
 
     if (_checkItem(_apiIdFile!)) {
-      await tool.parseApiIdObs(_apiIdFile!.path);
+      final r = await _apiIdFile!.readAsString();
+      await tool.parseApiIdObs(r.split("\n"));
     }
     if (_checkItem(_apiFile!)) {
-      await tool.parse(path: _apiFile!.path);
+      final r = await _apiFile!.readAsString();
+      await tool.parse(lines: r.split("\n"));
     }
   }
 
