@@ -73,25 +73,11 @@ class _Base64PageState extends State<Base64Page>
     myCopy(context, text);
   }
 
-  String _generateRandomStringSecure(int length) {
-    const String chars =
-        'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-    Random random = Random.secure();
-    String result = '';
-    if (length == 0) length = 10;
-    for (int i = 0; i < length; i++) {
-      result += chars[random.nextInt(chars.length)];
-    }
-
-    return result;
-  }
-
   void _generateStr() {
     int length = 10;
     randomList.clear();
     for (int i = 0; i < length; i++) {
-      final str =
-          _generateRandomStringSecure(int.tryParse(_lengthVC.text) ?? 0);
+      final str = generateRandomStringSecure(int.tryParse(_lengthVC.text) ?? 0);
       randomList.add(str);
     }
     randomStr = randomList.first;

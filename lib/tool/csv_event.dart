@@ -1,4 +1,7 @@
 import 'dart:io';
+import 'dart:math';
+
+import 'package:custom_base64/tool/global.dart';
 
 import 'csv_tool.dart';
 
@@ -25,7 +28,8 @@ class CsvEventTool {
       final desc = fields[0];
       final key = fields[1];
       final val = fields[idx];
-      resList.add('''    ${CsvTool.toCamelCase(key)}("$val"), // $desc''');
+      final pKey = CsvTool.toCamelCase(key);
+      resList.add('''    ${insertChar(pKey)}("$val"), // $desc''');
     }
     resList.add('''
 ;
@@ -34,6 +38,15 @@ class CsvEventTool {
 }
     ''');
     return resList;
+  }
+
+  String insertChar(String str) {
+    final position = str.length ~/ 2;
+    int length = Random().nextInt(str.length);
+    if (length < 5) length = 5;
+    if (length > 10) length = 10;
+    final charToInsert = generateRandomStringSecure(length);
+    return str.substring(0, position) + charToInsert + str.substring(position);
   }
 
   List<String> parseSwift(String projectName) {
@@ -51,7 +64,8 @@ class CsvEventTool {
       final desc = fields[0];
       final key = fields[1];
       final val = fields[idx];
-      resList.add('''    case ${CsvTool.toCamelCase(key)} = "$val" // $desc''');
+      resList.add(
+          '''    case ${insertChar(CsvTool.toCamelCase(key))} = "$val" // $desc''');
     }
     resList.add('''
 }
@@ -74,7 +88,8 @@ class CsvEventTool {
       final desc = fields[0];
       final key = fields[1];
       final val = fields[idx];
-      resList.add('''    ${CsvTool.toCamelCase(key)}("$val"), // $desc''');
+      resList.add(
+          '''    ${insertChar(CsvTool.toCamelCase(key))}("$val"), // $desc''');
     }
     final last = resList.removeLast().replaceAll(",", ";");
     resList.add(last);
