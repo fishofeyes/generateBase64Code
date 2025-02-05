@@ -62,7 +62,7 @@ class _ParseEnumPageState extends State<ParseEnumPage>
         final temp = lines.first.split(",");
         temp.removeAt(0);
         temp.removeAt(0);
-        data = temp;
+        data = temp.where((e) => e.isNotEmpty).toList();
       }
       setState(() {});
     }
@@ -96,6 +96,7 @@ class _ParseEnumPageState extends State<ParseEnumPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: SafeArea(
         child: Padding(

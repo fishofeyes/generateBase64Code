@@ -1,11 +1,10 @@
 import 'dart:io';
 
 class CsvTool {
-  final String path;
   Map<String, dynamic> csvMap = {};
   Map<String, dynamic> apiIdMap = {};
   Map<String, dynamic> apiIdObsMap = {};
-  CsvTool(this.path);
+  CsvTool();
 
   /// 解析接口对应对应的字符-header里面需要用到
   Future<void> parseApiIdObs(String path) async {
@@ -28,7 +27,7 @@ class CsvTool {
     }
   }
 
-  Future<void> parse({bool isApi = false}) async {
+  Future<void> parse({required String path, bool isApi = false}) async {
     final file = File(path); // 替换为你的 CSV 文件路径
     final contents = await file.readAsString();
     final lines = contents.split('\n');
@@ -205,10 +204,9 @@ class CsvTool {
   }
 
   /// 解析为枚举类型
-  void createApiEnum(String apiPath) {
-    final f = File(apiPath);
-    final contents = [];
-    for (String i in f.readAsLinesSync()) {
+  List<String> createDartApiEnum(List<String> str) {
+    final contents = <String>[];
+    for (String i in str) {
       if (i.trim().startsWith("//")) {
         contents.add(i);
         continue;
@@ -241,6 +239,6 @@ class CsvTool {
         contents.add(i);
       }
     }
-    f.writeAsStringSync(contents.join("\n"));
+    return contents;
   }
 }

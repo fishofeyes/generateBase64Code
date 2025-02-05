@@ -12,3 +12,19 @@ void myCopy(BuildContext context, String text) {
 
   ScaffoldMessenger.of(context).showSnackBar(snackBar);
 }
+
+void alertTitle(BuildContext context, String title) {
+  showDialog(
+      context: context,
+      builder: (c) {
+        return AlertDialog(
+          title: Text(title),
+          content: TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: const Text("OK"),
+          ),
+        );
+      });
+}

@@ -100,6 +100,7 @@ class _Base64PageState extends State<Base64Page>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),

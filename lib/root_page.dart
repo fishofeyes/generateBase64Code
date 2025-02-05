@@ -1,3 +1,4 @@
+import 'package:custom_base64/page/api_mix/api_page.dart';
 import 'package:custom_base64/page/base64/base64_page.dart';
 import 'package:custom_base64/page/paseEnum/parse_enum_page.dart';
 import 'package:flutter/material.dart';
@@ -11,7 +12,7 @@ class RootPage extends StatefulWidget {
 
 class _RootPageState extends State<RootPage>
     with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
-  final List<String> text = ["base64混入字符", "埋点事件枚举生成"];
+  final List<String> text = ["base64混入字符", "埋点事件枚举生成", "API混淆"];
   late TabController controller;
   @override
   void initState() {
@@ -27,6 +28,7 @@ class _RootPageState extends State<RootPage>
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -49,6 +51,7 @@ class _RootPageState extends State<RootPage>
                 children: const [
                   Base64Page(),
                   ParseEnumPage(),
+                  ApiPage(),
                 ],
               ),
             )

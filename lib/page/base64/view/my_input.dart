@@ -19,9 +19,10 @@ class MyInput extends StatelessWidget {
       maxLines: maxLine,
       controller: controller,
       inputFormatters: formatter,
+      style: const TextStyle(fontSize: 12, color: Colors.black),
       decoration: InputDecoration(
         hintText: hintText,
-        hintStyle: const TextStyle(color: Colors.grey),
+        hintStyle: const TextStyle(color: Colors.grey, fontSize: 12),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(16),
           borderSide: BorderSide(
