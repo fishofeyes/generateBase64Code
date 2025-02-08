@@ -182,7 +182,7 @@ xx
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        "Paste model(换行内容可能会导致无法识别):",
+                        "Paste model(注意换行内容可能会导致无法识别):",
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -197,18 +197,20 @@ xx
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        "选择API(可输入搜索): ",
+                        "选择API: ",
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.black,
                         ),
                       ),
+                      const SizedBox(height: 4),
                       DropdownMenu<String>(
                         menuHeight: 200,
                         width: 300,
                         initialSelection: currApi,
                         onSelected: _onSelect,
+                        hintText: "输入或选择API",
                         dropdownMenuEntries: _buildMenuList(data),
                       ),
                       const Text(
