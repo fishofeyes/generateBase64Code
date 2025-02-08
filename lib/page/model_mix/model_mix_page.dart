@@ -213,6 +213,7 @@ xx
                         hintText: "输入或选择API",
                         dropdownMenuEntries: _buildMenuList(data),
                       ),
+                      const SizedBox(height: 4),
                       const Text(
                         "注意：1. 未处理的字段需要自己修改。2. displayName等这种/xx/xx/类型的字段需要自己处理。",
                         style: TextStyle(
@@ -246,11 +247,14 @@ xx
                     Expanded(
                       child: Stack(
                         children: [
-                          SingleChildScrollView(
-                            child: HighlightView(
-                              enumCode,
-                              language: intTab.name,
-                              theme: vs2015Theme,
+                          SizedBox(
+                            width: double.infinity,
+                            child: SingleChildScrollView(
+                              child: HighlightView(
+                                enumCode,
+                                language: intTab.name,
+                                theme: vs2015Theme,
+                              ),
                             ),
                           ),
                           Positioned(
