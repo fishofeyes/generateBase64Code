@@ -85,11 +85,10 @@ class CsvTool {
   /// model 解析混淆
   /// apiPath: 未混淆接口路径
   /// modelPath: model结果路径
-  void createModel({required String apiPath, required String modelPath}) {
-    final f = File(modelPath);
-    final fileContent = f.readAsLinesSync();
+  List<String> createDartModel(
+      {required List<String> fileContent, required String apiPath}) {
     final resMap = csvMap[apiPath]["JSON_PROPERTY"];
-    final replaceContent = [];
+    final replaceContent = <String>[];
     for (String t in fileContent) {
       if (t.contains("['") || t.contains("[\"")) {
         String key = "";
@@ -127,7 +126,7 @@ class CsvTool {
         replaceContent.add(t);
       }
     }
-    f.writeAsStringSync(replaceContent.join("\n"));
+    return replaceContent;
   }
 
   /// 解析为普通字典类型
