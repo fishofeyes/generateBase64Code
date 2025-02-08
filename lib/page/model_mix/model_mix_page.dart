@@ -54,8 +54,8 @@ class _ModelMixPageState extends State<ModelMixPage>
 
   void _convertApi() async {
     List<String> res = [];
+    if (_controller.text.isEmpty) return;
     final content = _controller.text.split("\n");
-    if (content.isEmpty) return;
     switch (intTab) {
       case CodeEnum.dart:
         res = tool.createDartModel(fileContent: content, apiPath: currApi);

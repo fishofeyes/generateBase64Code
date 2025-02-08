@@ -59,8 +59,8 @@ class _ApiPageState extends State<ApiPage> with AutomaticKeepAliveClientMixin {
 
   void _convertApi() async {
     List<String> res = [];
+    if (_controller.text.isEmpty) return;
     final content = _controller.text;
-    if (content.isEmpty) return;
     switch (intTab) {
       case CodeEnum.dart:
         res = tool.createDartApiEnum(content.split("\n"));
