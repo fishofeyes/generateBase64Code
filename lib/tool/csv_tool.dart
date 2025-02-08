@@ -129,6 +129,57 @@ class CsvTool {
     return replaceContent;
   }
 
+  List<String> createSwiftModel(
+      {required List<String> fileContent, required String apiPath}) {
+    final resMap = csvMap[apiPath]["JSON_PROPERTY"];
+    final replaceContent = <String>[
+      "override func mapping(mapper: HelpingMapper) {",
+      "        super.mapping(mapper: mapper)"
+    ];
+    for (String t in fileContent) {
+      if (t.trim().startsWith("var ")) {
+        String key = t.trim().split(" ")[1].replaceAll(":", "");
+        final replace = resMap[key];
+        if (replace == null) {
+          t = '        mapper.specify(property: &$key, name: "")';
+        } else {
+          t = '        mapper.specify(property: &$key, name: "$replace")';
+        }
+        replaceContent.add(t);
+      } else {
+        replaceContent.add(t);
+      }
+    }
+    replaceContent.add("}");
+    return replaceContent;
+  }
+
+  List<String> createKotlinModel(
+      {required List<String> fileContent, required String apiPath}) {
+    final resMap = csvMap[apiPath]["JSON_PROPERTY"];
+    final replaceContent = <String>[];
+    for (String t in fileContent) {
+      if (t.contains("'") || t.contains("\"")) {
+        final str = t.trim().split("=").first;
+        String key = str.split(".").last.trim();
+        final replace = resMap[key];
+        if (replace == null) {
+          t = "$t // 未处理";
+        } else {
+          if (t.contains("'")) {
+            t = CsvTool.replaceAllQuotedContent2(t, replace);
+          } else {
+            t = CsvTool.replaceAllQuotedContent(t, replace);
+          }
+        }
+        replaceContent.add(t);
+      } else {
+        replaceContent.add(t);
+      }
+    }
+    return replaceContent;
+  }
+
   /// 解析为普通字典类型
   void createApi(String apiPath) {
     final f = File(apiPath);

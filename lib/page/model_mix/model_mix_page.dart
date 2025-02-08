@@ -61,11 +61,10 @@ class _ModelMixPageState extends State<ModelMixPage>
         res = tool.createDartModel(fileContent: content, apiPath: currApi);
         break;
       case CodeEnum.swift:
-        res = tool.createDartApiEnum(content);
+        res = tool.createSwiftModel(fileContent: content, apiPath: currApi);
         break;
       case CodeEnum.kotlin:
-        // res = tool.parseKotlin(currProjectName);
-        res = tool.createDartApiEnum(content);
+        res = tool.createKotlinModel(fileContent: content, apiPath: currApi);
         break;
     }
     enumCode = res.join("\n");
@@ -84,15 +83,13 @@ class _ModelMixPageState extends State<ModelMixPage>
       case CodeEnum.dart:
         return '''
 dart example:
-factory PresentModel.fromJson(Map<String, dynamic> json) => PresentModel(
-        id: json["id"],
-        createTime: json["create_time"],
-        fileId: json["file_id"],
-        vidQty: json["vid_qty"],
-        directory: json["directory"],
-        video: json["video"],
-      );
-
+id: json["id"],
+createTime: json["create_time"],
+fileId: json["file_id"],
+vidQty: json["vid_qty"],
+directory: json["directory"],
+video: json["video"],
+ // 或者
   Map<String, dynamic> toJson() => {
         "id": id,
         "create_time": createTime,
@@ -106,12 +103,23 @@ factory PresentModel.fromJson(Map<String, dynamic> json) => PresentModel(
       case CodeEnum.kotlin:
         return '''
 kotlin example：
-xx
+mci.id = itemObj.optInt("_id".mapping())
+mci.title = itemObj.optString("title".mapping()) ?: ""
+mci.cover = itemObj.optString("cover".mapping()) ?: ""
+mci.rate = itemObj.optString("rate".mapping()) ?: ""
+mci.quality = itemObj.optString("quality".mapping()) ?: ""
+mci.type = itemObj.optInt("type".mapping())
+mci.time = itemObj.optLong("storage_timestamp".mapping())
         ''';
       case CodeEnum.swift:
         return '''
-kotlin example：
-xx
+swift example：
+var id: String = ""
+var directory: Bool = false
+var file: Bool = false
+var video: Bool = false
+var vid_qty: Int = 0
+var update_time: Double = 0
         ''';
     }
   }
@@ -220,6 +228,22 @@ xx
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
                           color: Colors.red,
+                        ),
+                      ),
+                      InkWell(
+                        onTap: _convertApi,
+                        child: Container(
+                          width: double.infinity,
+                          height: 44,
+                          decoration: BoxDecoration(
+                            color: Colors.green,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          alignment: Alignment.center,
+                          child: const Text(
+                            "submit",
+                            style: TextStyle(color: Colors.white),
+                          ),
                         ),
                       ),
                     ],
