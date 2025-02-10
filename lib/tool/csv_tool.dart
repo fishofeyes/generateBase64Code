@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'package:custom_base64/page/model_mix/model_mix_page.dart';
+
 class CsvTool {
   Map<String, dynamic> csvMap = {};
   Map<String, dynamic> apiIdMap = {};
@@ -37,22 +39,33 @@ class CsvTool {
       }
       final normalApi =
           fields[0].replaceAll(RegExp(r'\{.*?\}'), '').replaceAll("//", "/");
-      final token = isApi ? fields[1] : toCamelCase(fields[1]);
+      final token1 = fields[1];
+      final token2 = toCamelCase(fields[1]);
+
       final replaceToken = fields[2];
       final type = fields[3];
       Map<String, dynamic>? content = csvMap[normalApi];
       if (content == null) {
         content = {
           type: {
-            token: replaceToken,
+            token1: replaceToken,
+            if (token2 != token1) token2: replaceToken,
           },
         };
       } else {
         final tType = content[type];
         if (tType == null) {
-          content[type] = {token: replaceToken};
+          content[type] = {
+            token1: replaceToken,
+            if (token2 != token1) token2: replaceToken,
+          };
         } else {
-          content[type][token] = replaceToken;
+          if (token2 != token1) {
+            content[type][token1] = replaceToken;
+            content[type][token2] = replaceToken;
+          } else {
+            content[type][token1] = replaceToken;
+          }
         }
       }
       csvMap[normalApi] = content;
@@ -130,27 +143,49 @@ class CsvTool {
   }
 
   List<String> createSwiftModel(
-      {required List<String> fileContent, required String apiPath}) {
+      {required List<String> fileContent,
+      required String apiPath,
+      required CodeSwiftRuler ruler}) {
     final resMap = csvMap[apiPath]["JSON_PROPERTY"];
-    final replaceContent = <String>[
-      "override func mapping(mapper: HelpingMapper) {",
-      "        super.mapping(mapper: mapper)"
-    ];
-    for (String t in fileContent) {
-      if (t.trim().startsWith("var ")) {
-        String key = t.trim().split(" ")[1].replaceAll(":", "");
-        final replace = resMap[key];
-        if (replace == null) {
-          t = '        mapper.specify(property: &$key, name: "")';
-        } else {
-          t = '        mapper.specify(property: &$key, name: "$replace")';
+    List<String> replaceContent = [];
+    switch (ruler) {
+      case CodeSwiftRuler.swift1:
+        for (String t in fileContent) {
+          if (t.trim().startsWith("var ")) {
+            String key = t.trim().split(" ")[1].replaceAll(":", "");
+            final replace = resMap[key];
+            if (replace == null) {
+              replaceContent.add("$t //未处理");
+            } else {
+              replaceContent.add(t.replaceFirst(key, replace));
+            }
+          } else {
+            replaceContent.add(t);
+          }
         }
-        replaceContent.add(t);
-      } else {
-        replaceContent.add(t);
-      }
+        break;
+      case CodeSwiftRuler.swift2:
+        replaceContent = [
+          "override func mapping(mapper: HelpingMapper) {",
+          "        super.mapping(mapper: mapper)"
+        ];
+        for (String t in fileContent) {
+          if (t.trim().startsWith("var ")) {
+            String key = t.trim().split(" ")[1].replaceAll(":", "");
+            final replace = resMap[key];
+            if (replace == null) {
+              t = '        mapper.specify(property: &$key, name: "")';
+            } else {
+              t = '        mapper.specify(property: &$key, name: "$replace")';
+            }
+            replaceContent.add(t);
+          } else {
+            replaceContent.add(t);
+          }
+        }
+        replaceContent.add("}");
+        break;
     }
-    replaceContent.add("}");
     return replaceContent;
   }
 

@@ -1,10 +1,17 @@
 import 'package:custom_base64/page/base64/view/my_input.dart';
+import 'package:custom_base64/page/model_mix/view/rule_item.dart';
 import 'package:custom_base64/tool/csv_tool.dart';
 import 'package:custom_base64/tool/global.dart';
 import 'package:desktop_drop/desktop_drop.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_highlight/flutter_highlight.dart';
 import 'package:flutter_highlight/themes/vs2015.dart';
+
+enum CodeSwiftRuler {
+  swift1,
+  swift2,
+}
 
 class ModelMixPage extends StatefulWidget {
   const ModelMixPage({super.key});
@@ -22,6 +29,7 @@ class _ModelMixPageState extends State<ModelMixPage>
   CsvTool tool = CsvTool();
   List<String> data = [];
   String currApi = "";
+  CodeSwiftRuler swiftRuler = CodeSwiftRuler.swift1;
   final TextEditingController _controller = TextEditingController();
   @override
   void initState() {
@@ -61,7 +69,11 @@ class _ModelMixPageState extends State<ModelMixPage>
         res = tool.createDartModel(fileContent: content, apiPath: currApi);
         break;
       case CodeEnum.swift:
-        res = tool.createSwiftModel(fileContent: content, apiPath: currApi);
+        res = tool.createSwiftModel(
+          fileContent: content,
+          apiPath: currApi,
+          ruler: swiftRuler,
+        );
         break;
       case CodeEnum.kotlin:
         res = tool.createKotlinModel(fileContent: content, apiPath: currApi);
@@ -274,10 +286,37 @@ var update_time: Double = 0
                           SizedBox(
                             width: double.infinity,
                             child: SingleChildScrollView(
-                              child: HighlightView(
-                                enumCode,
-                                language: intTab.name,
-                                theme: vs2015Theme,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Visibility(
+                                    child: Wrap(
+                                      children: CodeSwiftRuler.values
+                                          .map(
+                                            (e) => RuleItem(
+                                              data: e.name,
+                                              groupRuler: swiftRuler,
+                                              ruler: e,
+                                              onTap: () {
+                                                setState(() {
+                                                  swiftRuler = e;
+                                                });
+                                                _convertApi();
+                                              },
+                                            ),
+                                          )
+                                          .toList(),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: HighlightView(
+                                      enumCode,
+                                      language: intTab.name,
+                                      theme: vs2015Theme,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
                           ),
