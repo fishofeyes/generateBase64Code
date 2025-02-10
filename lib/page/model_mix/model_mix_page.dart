@@ -290,6 +290,7 @@ var update_time: Double = 0
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Visibility(
+                                    visible: intTab == CodeEnum.swift,
                                     child: Wrap(
                                       children: CodeSwiftRuler.values
                                           .map(
