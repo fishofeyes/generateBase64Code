@@ -276,7 +276,7 @@ class CsvTool {
   }
 
   List<String> extractQuotedContent2(String text) {
-    return RegExp(r"([^']*)'")
+    return RegExp(r"'([^']*)'")
         .allMatches(text)
         .map((match) => match.group(1)!)
         .toList();
