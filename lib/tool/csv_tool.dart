@@ -39,8 +39,8 @@ class CsvTool {
       }
       final normalApi =
           fields[0].replaceAll(RegExp(r'\{.*?\}'), '').replaceAll("//", "/");
-      final token1 = fields[1];
-      final token2 = toCamelCase(fields[1]);
+      final token1 = fields[1].replaceFirst("/", '');
+      final token2 = toCamelCase(fields[1]).replaceFirst('/', "");
 
       final replaceToken = fields[2];
       final type = fields[3];
