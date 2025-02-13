@@ -100,10 +100,11 @@ class CsvTool {
   /// modelPath: model结果路径
   List<String> createDartModel(
       {required List<String> fileContent, required String apiPath}) {
-    final resMap = csvMap[apiPath]["JSON_PROPERTY"];
+    final resMap =
+        csvMap[apiPath][apiPath == "\\N" ? "ADHOC" : "JSON_PROPERTY"];
     final replaceContent = <String>[];
     for (String t in fileContent) {
-      if (t.contains("['") || t.contains("[\"")) {
+      if (t.contains("'") || t.contains("\"")) {
         String key = "";
         if (t.contains('\'')) {
           key = extractQuotedContent2(t).first;
@@ -290,10 +291,15 @@ class CsvTool {
         contents.add(i);
         continue;
       }
-      if (i.contains("\"")) {
+      if (i.contains("\"") || i.contains("'")) {
         RegExp regExp = RegExp(r'"([^"]*)"');
-        Match? firstMatch = regExp.firstMatch(i);
-        String? key = firstMatch?.group(1);
+        String? key = regExp.firstMatch(i)?.group(1);
+        bool isSingle = false;
+        if (key == null) {
+          isSingle = true;
+          regExp = RegExp(r"'([^']*)'");
+          key = regExp.firstMatch(i)?.group(1);
+        }
         final obj = apiIdObsMap[key];
         if (key == null || obj == null) {
           contents.add(i);
@@ -312,7 +318,11 @@ class CsvTool {
               return match.group(0)!;
             }
           });
-          contents.add(newString.replaceAll('""', '"${obj['obs']}"'));
+          if (isSingle) {
+            contents.add(newString.replaceAll("''", "'${obj['obs']}'"));
+          } else {
+            contents.add(newString.replaceAll('""', '"${obj['obs']}"'));
+          }
         }
       } else {
         contents.add(i);
