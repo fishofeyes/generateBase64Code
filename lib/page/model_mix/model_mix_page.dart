@@ -76,7 +76,30 @@ class _ModelMixPageState extends State<ModelMixPage>
         );
         break;
       case CodeEnum.kotlin:
-        res = tool.createKotlinModel(fileContent: content, apiPath: currApi);
+        res = tool.createDartModel(fileContent: content, apiPath: currApi);
+        break;
+    }
+    enumCode = res.join("\n");
+    setState(() {});
+  }
+
+  void _reverseApi() async {
+    List<String> res = [];
+    if (_controller.text.isEmpty) return;
+    final content = _controller.text.split("\n");
+    switch (intTab) {
+      case CodeEnum.dart:
+        res = tool.reverseDartModel(fileContent: content, apiPath: currApi);
+        break;
+      case CodeEnum.swift:
+        res = tool.reverseSwiftModel(
+          fileContent: content,
+          apiPath: currApi,
+          ruler: swiftRuler,
+        );
+        break;
+      case CodeEnum.kotlin:
+        res = tool.reverseDartModel(fileContent: content, apiPath: currApi);
         break;
     }
     enumCode = res.join("\n");
@@ -242,21 +265,44 @@ var update_time: Double = 0
                           color: Colors.red,
                         ),
                       ),
-                      InkWell(
-                        onTap: _convertApi,
-                        child: Container(
-                          width: double.infinity,
-                          height: 44,
-                          decoration: BoxDecoration(
-                            color: Colors.green,
-                            borderRadius: BorderRadius.circular(12),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: _convertApi,
+                              child: Container(
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: Colors.green,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  "submit",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
                           ),
-                          alignment: Alignment.center,
-                          child: const Text(
-                            "submit",
-                            style: TextStyle(color: Colors.white),
+                          const SizedBox(width: 20),
+                          Expanded(
+                            child: InkWell(
+                              onTap: _reverseApi,
+                              child: Container(
+                                height: 44,
+                                decoration: BoxDecoration(
+                                  color: Colors.red,
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                alignment: Alignment.center,
+                                child: const Text(
+                                  "reverse",
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ],
                   ),

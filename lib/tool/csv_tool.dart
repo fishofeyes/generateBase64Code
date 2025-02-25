@@ -4,6 +4,7 @@ import 'package:custom_base64/page/model_mix/model_mix_page.dart';
 
 class CsvTool {
   Map<String, dynamic> csvMap = {};
+  Map<String, dynamic> csvReverseMap = {};
   Map<String, dynamic> apiIdMap = {};
   Map<String, dynamic> apiIdObsMap = {};
   CsvTool();
@@ -45,6 +46,23 @@ class CsvTool {
       final replaceToken = fields[2];
       final type = fields[3];
       Map<String, dynamic>? content = csvMap[normalApi];
+      Map<String, dynamic>? reverseContent = csvReverseMap[normalApi];
+      if (reverseContent == null) {
+        reverseContent = {
+          type: {
+            replaceToken: token1,
+          },
+        };
+      } else {
+        final tType = reverseContent[type];
+        if (tType == null) {
+          reverseContent[type] = {
+            replaceToken: token1,
+          };
+        } else {
+          reverseContent[type][replaceToken] = token1;
+        }
+      }
       if (content == null) {
         content = {
           type: {
@@ -69,6 +87,7 @@ class CsvTool {
         }
       }
       csvMap[normalApi] = content;
+      csvReverseMap[normalApi] = reverseContent;
       i++;
     }
   }
@@ -143,11 +162,57 @@ class CsvTool {
     return replaceContent;
   }
 
+  List<String> reverseDartModel(
+      {required List<String> fileContent, required String apiPath}) {
+    final resMap =
+        csvReverseMap[apiPath][apiPath == "\\N" ? "ADHOC" : "JSON_PROPERTY"];
+    final replaceContent = <String>[];
+    for (String t in fileContent) {
+      if (t.contains("'") || t.contains("\"")) {
+        String key = "";
+        if (t.contains('\'')) {
+          key = extractQuotedContent2(t).first;
+        } else {
+          key = extractQuotedContent(t).first;
+        }
+        final replace = resMap[key];
+        if (replace == null) {
+          t = "$t // 未处理";
+        } else {
+          if (t.contains("['")) {
+            t = CsvTool.replaceAllQuotedContent2(t, replace);
+          } else {
+            t = CsvTool.replaceAllQuotedContent(t, replace);
+          }
+        }
+        replaceContent.add(t);
+      } else if (t.contains("\":")) {
+        String key = "";
+        if (t.contains('\'')) {
+          key = extractQuotedContent2(t).first;
+        } else {
+          key = extractQuotedContent(t).first;
+        }
+        final replace = resMap[key];
+        if (replace == null) {
+          t = "$t // 未处理";
+        } else {
+          t = CsvTool.replaceAllQuotedContent(t, replace);
+        }
+        replaceContent.add(t);
+      } else {
+        replaceContent.add(t);
+      }
+    }
+    return replaceContent;
+  }
+
   List<String> createSwiftModel(
       {required List<String> fileContent,
       required String apiPath,
       required CodeSwiftRuler ruler}) {
-    final resMap = csvMap[apiPath]["JSON_PROPERTY"];
+    final resMap = csvMap[apiPath]?["JSON_PROPERTY"];
+    if (resMap == null) return [];
     List<String> replaceContent = [];
     switch (ruler) {
       case CodeSwiftRuler.swift1:
@@ -190,28 +255,49 @@ class CsvTool {
     return replaceContent;
   }
 
-  List<String> createKotlinModel(
-      {required List<String> fileContent, required String apiPath}) {
-    final resMap = csvMap[apiPath]["JSON_PROPERTY"];
-    final replaceContent = <String>[];
-    for (String t in fileContent) {
-      if (t.contains("'") || t.contains("\"")) {
-        final str = t.trim().split("=").first;
-        String key = str.split(".").last.trim();
-        final replace = resMap[key];
-        if (replace == null) {
-          t = "$t // 未处理";
-        } else {
-          if (t.contains("'")) {
-            t = CsvTool.replaceAllQuotedContent2(t, replace);
+  List<String> reverseSwiftModel(
+      {required List<String> fileContent,
+      required String apiPath,
+      required CodeSwiftRuler ruler}) {
+    final resMap = csvReverseMap[apiPath]["JSON_PROPERTY"];
+    List<String> replaceContent = [];
+    switch (ruler) {
+      case CodeSwiftRuler.swift1:
+        for (String t in fileContent) {
+          if (t.trim().startsWith("var ")) {
+            String key = t.trim().split(" ")[1].replaceAll(":", "");
+            final replace = resMap[key];
+            if (replace == null) {
+              replaceContent.add("$t //未处理");
+            } else {
+              replaceContent.add(t.replaceFirst(key, replace));
+            }
           } else {
-            t = CsvTool.replaceAllQuotedContent(t, replace);
+            replaceContent.add(t);
           }
         }
-        replaceContent.add(t);
-      } else {
-        replaceContent.add(t);
-      }
+        break;
+      case CodeSwiftRuler.swift2:
+        replaceContent = [
+          "override func mapping(mapper: HelpingMapper) {",
+          "        super.mapping(mapper: mapper)"
+        ];
+        for (String t in fileContent) {
+          if (t.trim().startsWith("var ")) {
+            String key = t.trim().split(" ")[1].replaceAll(":", "");
+            final replace = resMap[key];
+            if (replace == null) {
+              t = '        mapper.specify(property: &$key, name: "")';
+            } else {
+              t = '        mapper.specify(property: &$key, name: "$replace")';
+            }
+            replaceContent.add(t);
+          } else {
+            replaceContent.add(t);
+          }
+        }
+        replaceContent.add("}");
+        break;
     }
     return replaceContent;
   }
