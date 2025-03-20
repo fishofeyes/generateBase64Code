@@ -274,11 +274,14 @@ struct MyEnum {
                     Expanded(
                       child: Stack(
                         children: [
-                          SingleChildScrollView(
-                            child: HighlightView(
-                              enumCode,
-                              language: intTab.name,
-                              theme: vs2015Theme,
+                          SizedBox(
+                            width: double.infinity,
+                            child: SingleChildScrollView(
+                              child: HighlightView(
+                                enumCode,
+                                language: intTab.name,
+                                theme: vs2015Theme,
+                              ),
                             ),
                           ),
                           Positioned(

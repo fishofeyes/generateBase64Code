@@ -134,7 +134,7 @@ class CsvTool {
         if (replace == null) {
           t = "$t // 未处理";
         } else {
-          if (t.contains("['")) {
+          if (t.contains("'")) {
             t = CsvTool.replaceAllQuotedContent2(t, replace);
           } else {
             t = CsvTool.replaceAllQuotedContent(t, replace);
@@ -179,7 +179,7 @@ class CsvTool {
         if (replace == null) {
           t = "$t // 未处理";
         } else {
-          if (t.contains("['")) {
+          if (t.contains("'")) {
             t = CsvTool.replaceAllQuotedContent2(t, replace);
           } else {
             t = CsvTool.replaceAllQuotedContent(t, replace);
@@ -404,10 +404,14 @@ class CsvTool {
               return match.group(0)!;
             }
           });
-          if (isSingle) {
-            contents.add(newString.replaceAll("''", "'${obj['obs']}'"));
+          if (contents.contains("''") || contents.contains('""')) {
+            if (isSingle) {
+              contents.add(newString.replaceAll("''", "'${obj['obs']}'"));
+            } else {
+              contents.add(newString.replaceAll('""', '"${obj['obs']}"'));
+            }
           } else {
-            contents.add(newString.replaceAll('""', '"${obj['obs']}"'));
+            contents.add('$newString;//${obj['obs']}');
           }
         }
       } else {
