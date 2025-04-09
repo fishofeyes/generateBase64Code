@@ -134,7 +134,7 @@ struct MyEnum {
                       const Text(
                         "混淆映射表 CSV:",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.black,
                         ),
@@ -177,7 +177,7 @@ struct MyEnum {
                       const Text(
                         "API ID CSV:",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.black,
                         ),
@@ -221,7 +221,7 @@ struct MyEnum {
                       const Text(
                         "Paste api enum:",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.black,
                         ),

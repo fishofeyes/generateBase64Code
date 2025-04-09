@@ -33,7 +33,7 @@ class RuleItem extends StatelessWidget {
               data,
               style: const TextStyle(
                   color: Colors.black,
-                  fontSize: 14,
+                  fontSize: 12,
                   fontWeight: FontWeight.w500),
             )
           ],

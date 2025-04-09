@@ -184,7 +184,7 @@ var update_time: Double = 0
                       const Text(
                         "混淆映射表 CSV(支持订阅参数混淆):",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.black,
                         ),
@@ -225,9 +225,9 @@ var update_time: Double = 0
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        "Paste model(注意换行内容可能会导致无法识别，一行中如果有单、双引号会导致替换失败):",
+                        "Paste model(一行中如果同时有单、双引号会导致替换失败):",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.black,
                         ),
@@ -242,7 +242,7 @@ var update_time: Double = 0
                       const Text(
                         "选择API: ",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.black,
                         ),
@@ -260,7 +260,7 @@ var update_time: Double = 0
                       const Text(
                         "注意：1. 未处理的字段需要自己修改。2. displayName等这种/xx/xx/类型的字段需要自己处理。",
                         style: TextStyle(
-                          fontSize: 14,
+                          fontSize: 12,
                           fontWeight: FontWeight.w600,
                           color: Colors.red,
                         ),

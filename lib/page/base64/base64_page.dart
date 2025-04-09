@@ -113,7 +113,7 @@ class _Base64PageState extends State<Base64Page>
                           const Text(
                             "Random string length",
                             style: TextStyle(
-                              fontSize: 14,
+                              fontSize: 12,
                               fontWeight: FontWeight.w600,
                               color: Colors.black,
                             ),
@@ -214,7 +214,7 @@ class _Base64PageState extends State<Base64Page>
                         const Text(
                           "Result: ",
                           style: TextStyle(
-                            fontSize: 14,
+                            fontSize: 12,
                             fontWeight: FontWeight.w600,
                             color: Colors.black,
                           ),
@@ -230,7 +230,7 @@ class _Base64PageState extends State<Base64Page>
                                     child: Text(
                                       result,
                                       style: const TextStyle(
-                                          fontSize: 14, color: Colors.black),
+                                          fontSize: 12, color: Colors.black),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 5,
                                     ),
@@ -270,7 +270,7 @@ class _Base64PageState extends State<Base64Page>
                                     child: Text(
                                       useStr,
                                       style: const TextStyle(
-                                          fontSize: 14, color: Colors.black),
+                                          fontSize: 12, color: Colors.black),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 2,
                                     ),
@@ -296,7 +296,7 @@ class _Base64PageState extends State<Base64Page>
                                     child: Text(
                                       useDetailStr,
                                       style: const TextStyle(
-                                          fontSize: 14, color: Colors.black),
+                                          fontSize: 12, color: Colors.black),
                                       overflow: TextOverflow.ellipsis,
                                       maxLines: 5,
                                     ),
