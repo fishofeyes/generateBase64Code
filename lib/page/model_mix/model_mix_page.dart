@@ -182,7 +182,7 @@ var update_time: Double = 0
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       const Text(
-                        "混淆映射表 CSV:",
+                        "混淆映射表 CSV(支持订阅参数混淆):",
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
@@ -225,7 +225,7 @@ var update_time: Double = 0
                       ),
                       const SizedBox(height: 16),
                       const Text(
-                        "Paste model(注意换行内容可能会导致无法识别):",
+                        "Paste model(注意换行内容可能会导致无法识别，一行中如果有单、双引号会导致替换失败):",
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w600,
