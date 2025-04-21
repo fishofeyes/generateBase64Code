@@ -15,4 +15,8 @@ List<String> extractQuotedContent(String text) {
 void main() {
   final res = extractQuotedContent('''FileDetail.fromJson(json["trina"]),''');
   print(res);
+  const path = "/v1/app/download/file/{uid}/{fileId}";
+
+  final cleanedPath = path.replaceAll(RegExp(r'\/\{[^}]*\}'), "");
+  print(cleanedPath);
 }

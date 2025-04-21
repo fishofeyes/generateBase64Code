@@ -17,8 +17,7 @@ class CsvTool {
         continue;
       }
       final id = fields[0];
-      final api =
-          fields[1].replaceAll(RegExp(r'\{.*?\}'), '').replaceAll("//", "/");
+      final api = fields[1].replaceAll(RegExp(r'\/\{[^}]*\}'), '');
       final obs = fields[2];
       apiIdObsMap[api] = {
         "id": id,
@@ -38,18 +37,18 @@ class CsvTool {
       if (fields.length < 4) {
         continue;
       }
-      final normalApi =
-          fields[0].replaceAll(RegExp(r'\{.*?\}'), '').replaceAll("//", "/");
+      final normalApi = fields[0].replaceAll(RegExp(r'\/\{[^}]*\}'), '');
       final token1 = fields[1].replaceFirst("/", '');
       final token2 = toCamelCase(fields[1]).replaceFirst('/', "");
 
       final replaceToken = fields[2];
       final type = fields[3];
       csvReverseMap
-          .putIfAbsent(normalApi, () => {})
-          .putIfAbsent(type, () => {})[replaceToken] = token1;
-      final content =
-          csvMap.putIfAbsent(normalApi, () => {}).putIfAbsent(type, () => {});
+          .putIfAbsent(normalApi, () => <String, dynamic>{})
+          .putIfAbsent(type, () => <String, dynamic>{})[replaceToken] = token1;
+      final content = csvMap
+          .putIfAbsent(normalApi, () => <String, dynamic>{})
+          .putIfAbsent(type, () => <String, dynamic>{});
       content[token1] = replaceToken;
       if (token2 != token1) {
         content[token2] = replaceToken;
@@ -273,7 +272,7 @@ class CsvTool {
           key = regExp.firstMatch(i)?.group(1);
         }
         final obj = apiIdObsMap[key];
-        if (key == null || obj == null) {
+        if (key == null) {
           contents.add(i);
         } else {
           final Map<String, dynamic>? map = csvMap[key]?["PATH"];
@@ -283,14 +282,8 @@ class CsvTool {
               apiPath = apiPath.replaceFirst(k, map[k]);
             }
           }
-          String newString = i.replaceFirstMapped(regExp, (match) {
-            if (match.start > 0) {
-              return '"$apiPath"';
-            } else {
-              return match.group(0)!;
-            }
-          });
-          if (contents.contains("''") || contents.contains('""')) {
+          final newString = i.replaceAll(key, apiPath);
+          if (newString.contains("''") || newString.contains('""')) {
             if (isSingle) {
               contents.add(newString.replaceAll("''", "'${obj['obs']}'"));
             } else {

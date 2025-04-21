@@ -82,8 +82,8 @@ class _ApiPageState extends State<ApiPage> with AutomaticKeepAliveClientMixin {
 dart example:
 enum NetworkServiceApi {
   openPage("/v1/app/open/data", ""), // 类名可自行修改
-  openDec("/v1/app/open/file/", ""),
-  playUrl("/v1/app/download/file/", ""),
+  openDec("/v1/app/open/file", ""),
+  playUrl("/v1/app/download/file", ""),
   appPost("/v1/app/events", ""),
   ;
   final String desc;
