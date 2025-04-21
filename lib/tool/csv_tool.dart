@@ -45,49 +45,15 @@ class CsvTool {
 
       final replaceToken = fields[2];
       final type = fields[3];
-      Map<String, dynamic>? content = csvMap[normalApi];
-      Map<String, dynamic>? reverseContent = csvReverseMap[normalApi];
-      if (reverseContent == null) {
-        reverseContent = {
-          type: {
-            replaceToken: token1,
-          },
-        };
-      } else {
-        final tType = reverseContent[type];
-        if (tType == null) {
-          reverseContent[type] = {
-            replaceToken: token1,
-          };
-        } else {
-          reverseContent[type][replaceToken] = token1;
-        }
+      csvReverseMap
+          .putIfAbsent(normalApi, () => {})
+          .putIfAbsent(type, () => {})[replaceToken] = token1;
+      final content =
+          csvMap.putIfAbsent(normalApi, () => {}).putIfAbsent(type, () => {});
+      content[token1] = replaceToken;
+      if (token2 != token1) {
+        content[token2] = replaceToken;
       }
-      if (content == null) {
-        content = {
-          type: {
-            token1: replaceToken,
-            if (token2 != token1) token2: replaceToken,
-          },
-        };
-      } else {
-        final tType = content[type];
-        if (tType == null) {
-          content[type] = {
-            token1: replaceToken,
-            if (token2 != token1) token2: replaceToken,
-          };
-        } else {
-          if (token2 != token1) {
-            content[type][token1] = replaceToken;
-            content[type][token2] = replaceToken;
-          } else {
-            content[type][token1] = replaceToken;
-          }
-        }
-      }
-      csvMap[normalApi] = content;
-      csvReverseMap[normalApi] = reverseContent;
       i++;
     }
   }
@@ -124,12 +90,7 @@ class CsvTool {
     final replaceContent = <String>[];
     for (String t in fileContent) {
       if (t.contains("'") || t.contains("\"")) {
-        String key = "";
-        if (t.contains('\'')) {
-          key = extractQuotedContent2(t).first;
-        } else {
-          key = extractQuotedContent(t).first;
-        }
+        String key = extractQuotedContent(t).first;
         final replace = resMap[key];
         if (replace == null) {
           t = "$t // 未处理";
@@ -142,12 +103,7 @@ class CsvTool {
         }
         replaceContent.add(t);
       } else if (t.contains("\":")) {
-        String key = "";
-        if (t.contains('\'')) {
-          key = extractQuotedContent2(t).first;
-        } else {
-          key = extractQuotedContent(t).first;
-        }
+        String key = extractQuotedContent(t).first;
         final replace = resMap[key];
         if (replace == null) {
           t = "$t // 未处理";
@@ -169,12 +125,7 @@ class CsvTool {
     final replaceContent = <String>[];
     for (String t in fileContent) {
       if (t.contains("'") || t.contains("\"")) {
-        String key = "";
-        if (t.contains('\'')) {
-          key = extractQuotedContent2(t).first;
-        } else {
-          key = extractQuotedContent(t).first;
-        }
+        String key = extractQuotedContent(t).first;
         final replace = resMap[key];
         if (replace == null) {
           t = "$t // 未处理";
@@ -187,12 +138,7 @@ class CsvTool {
         }
         replaceContent.add(t);
       } else if (t.contains("\":")) {
-        String key = "";
-        if (t.contains('\'')) {
-          key = extractQuotedContent2(t).first;
-        } else {
-          key = extractQuotedContent(t).first;
-        }
+        String key = extractQuotedContent(t).first;
         final replace = resMap[key];
         if (replace == null) {
           t = "$t // 未处理";
@@ -302,70 +248,10 @@ class CsvTool {
     return replaceContent;
   }
 
-  /// 解析为普通字典类型
-  void createApi(String apiPath) {
-    final f = File(apiPath);
-    final contents = [];
-    final contentsApiIds = [];
-    for (String i in f.readAsLinesSync()) {
-      if (i.trim().startsWith("//")) {
-        contents.add(i);
-        continue;
-      }
-      if (i.contains("= '") || i.contains("= \"")) {
-        late String key;
-        if (i.contains('= "')) {
-          key = extractQuotedContent(i).last;
-        } else {
-          key = extractQuotedContent2(i).last;
-        }
-        final l = i.trim().split(" ");
-        if (i.trim().startsWith('static')) {
-          final obj = apiIdObsMap[key];
-          if (obj != null) {
-            contentsApiIds.add("NetworkEndpoints.${l[2]}: \"${obj["obs"]}\",");
-          } else {
-            contentsApiIds.add("NetworkEndpoints.${l[2]}: null,");
-          }
-        }
-        final Map<String, dynamic>? map = csvMap[key]?["PATH"];
-        if (map != null) {
-          List<String> tempLine = i.split("=");
-          for (final k in map.keys) {
-            tempLine[1] = tempLine.last.replaceFirst(k, map[k]);
-          }
-          contents.add(tempLine.join("="));
-        } else {
-          contents.add(i);
-        }
-      } else {
-        if (i.trim() == "}") {
-          contents.add('''
-  static String? getAPIID(String key) {
-    final map = {
-      ${contentsApiIds.join("\n      ")}
-    };
-    return map[key];
-  }
-        ''');
-        }
-        contents.add(i);
-      }
-    }
-    f.writeAsStringSync(contents.join("\n"));
-  }
-
   List<String> extractQuotedContent(String text) {
-    return RegExp(r'"([^"]*)"')
+    return RegExp(r"""(["'])(.*?)\1""")
         .allMatches(text)
-        .map((match) => match.group(1)!)
-        .toList();
-  }
-
-  List<String> extractQuotedContent2(String text) {
-    return RegExp(r"'([^']*)'")
-        .allMatches(text)
-        .map((match) => match.group(1)!)
+        .map((match) => match.group(2)!)
         .toList();
   }
 

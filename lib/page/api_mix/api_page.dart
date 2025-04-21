@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:custom_base64/page/base64/view/my_input.dart';
 import 'package:custom_base64/tool/csv_tool.dart';
 import 'package:custom_base64/tool/global.dart';
