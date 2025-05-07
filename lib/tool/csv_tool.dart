@@ -283,14 +283,18 @@ class CsvTool {
             }
           }
           final newString = i.replaceAll(key, apiPath);
-          if (newString.contains("''") || newString.contains('""')) {
-            if (isSingle) {
-              contents.add(newString.replaceAll("''", "'${obj['obs']}'"));
+          if (obj != null) {
+            if (newString.contains("''") || newString.contains('""')) {
+              if (isSingle) {
+                contents.add(newString.replaceAll("''", "'${obj['obs']}'"));
+              } else {
+                contents.add(newString.replaceAll('""', '"${obj['obs']}"'));
+              }
             } else {
-              contents.add(newString.replaceAll('""', '"${obj['obs']}"'));
+              contents.add('$newString;//${obj['obs']}');
             }
           } else {
-            contents.add('$newString;//${obj['obs']}');
+            contents.add(newString);
           }
         }
       } else {
