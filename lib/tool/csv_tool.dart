@@ -11,16 +11,23 @@ class CsvTool {
 
   /// 解析接口对应对应的字符-header里面需要用到
   Future<void> parseApiIdObs(List<String> lines) async {
+    int replaceTokenIdx = 0;
     for (final line in lines) {
       final fields = line.split(',');
       if (fields.length < 3) {
         continue;
       }
-      final id = fields[0];
-      final api = fields[1].replaceAll(RegExp(r'\/\{[^}]*\}'), '');
-      final obs = fields[2];
+      String api = fields[1].replaceAll(RegExp(r'\/\{[^}]*\}'), '');
+      String obs = fields[2];
+      if (replaceTokenIdx == 0) {
+        replaceTokenIdx = fields.indexWhere((e) => e == "api_replace_token");
+        if (replaceTokenIdx == -1) {
+          replaceTokenIdx = 2;
+        }
+        continue;
+      }
+      obs = fields[replaceTokenIdx];
       apiIdObsMap[api] = {
-        "id": id,
         "obs": obs,
       };
     }
@@ -28,21 +35,26 @@ class CsvTool {
 
   Future<void> parse({required List<String> lines, bool isApi = false}) async {
     int i = 0;
+    int idxToken = 0;
+    int idxType = 0;
+    int idxReplace = 0;
     for (final line in lines) {
-      if (i == 0) {
-        i++;
-        continue;
-      }
       final fields = line.split(',');
       if (fields.length < 4) {
         continue;
       }
+      if (idxToken == 0) {
+        idxToken = fields.indexWhere((e) => e == "token");
+        idxReplace = fields.indexWhere((e) => e == "replace_token");
+        idxType = fields.indexWhere((e) => e == "type" || e == "param_type");
+        continue;
+      }
       final normalApi = fields[0].replaceAll(RegExp(r'\/\{[^}]*\}'), '');
-      final token1 = fields[1].replaceFirst("/", '');
-      final token2 = toCamelCase(fields[1]).replaceFirst('/', "");
+      final token1 = fields[idxToken].replaceFirst("/", '');
+      final token2 = toCamelCase(fields[idxToken]).replaceFirst('/', "");
 
-      final replaceToken = fields[2];
-      final type = fields[3];
+      final replaceToken = fields[idxReplace];
+      final type = fields[idxType];
       csvReverseMap
           .putIfAbsent(normalApi, () => <String, dynamic>{})
           .putIfAbsent(type, () => <String, dynamic>{})[replaceToken] = token1;
