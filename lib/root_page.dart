@@ -19,6 +19,7 @@ class _RootPageState extends State<RootPage>
   void initState() {
     super.initState();
     controller = TabController(length: text.length, vsync: this);
+    print("abc")
   }
 
   @override
