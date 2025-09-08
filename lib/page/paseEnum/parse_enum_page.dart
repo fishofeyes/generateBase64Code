@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:io';
 
 import 'package:custom_base64/tool/csv_event.dart';
@@ -24,6 +25,7 @@ class _ParseEnumPageState extends State<ParseEnumPage>
   String enumCode = "";
   String currProjectName = "";
   CodeEnum intTab = CodeEnum.dart;
+  bool isEvent = true;
   @override
   void initState() {
     super.initState();
@@ -76,13 +78,13 @@ class _ParseEnumPageState extends State<ParseEnumPage>
       List<String> res;
       switch (intTab) {
         case CodeEnum.dart:
-          res = tool.parse(currProjectName);
+          res = tool.parse(currProjectName, isEvent: isEvent);
           break;
         case CodeEnum.swift:
-          res = tool.parseSwift(currProjectName);
+          res = tool.parseSwift(currProjectName, isEvent: isEvent);
           break;
         case CodeEnum.kotlin:
-          res = tool.parseKotlin(currProjectName);
+          res = tool.parseKotlin(currProjectName, isEvent: isEvent);
           break;
       }
       enumCode = res.join("\n");
@@ -167,6 +169,21 @@ class _ParseEnumPageState extends State<ParseEnumPage>
                         color: Colors.red,
                       ),
                     ),
+                    RadioGroup<bool>(
+                        onChanged: (e) {
+                          setState(() {
+                            isEvent = e!;
+                          });
+                        },
+                        groupValue: isEvent,
+                        child: const Row(
+                          children: [
+                            Radio(value: true),
+                            Text('事件枚举'),
+                            Radio(value: false),
+                            Text('属性枚举 / 上报值枚举'),
+                          ],
+                        ))
                   ],
                 ),
               ),

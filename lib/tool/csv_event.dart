@@ -12,7 +12,7 @@ class CsvEventTool {
     lines = contents;
   }
 
-  List<String> parse(String projectName) {
+  List<String> parse(String projectName, {bool isEvent = true}) {
     if (lines.isEmpty) return [];
     final idx = lines[0].split(',').indexOf(projectName);
     List<String> resList = ["enum MyEnum {"];
@@ -24,11 +24,18 @@ class CsvEventTool {
       }
       final fields = line.split(',');
       if (fields.length < 3) break;
-      final desc = fields[0];
-      final key = fields[1];
-      final val = fields[idx];
-      final pKey = CsvTool.toCamelCase(key);
-      resList.add('''    ${insertChar(pKey)}("$val"), // $desc''');
+      if (isEvent) {
+        final desc = fields[0];
+        final key = fields[1];
+        final val = fields[idx];
+        final pKey = CsvTool.toCamelCase(key);
+        resList.add('''    ${insertChar(pKey)}("$val"), // $desc''');
+      } else {
+        final key = fields[0];
+        final val = fields[idx];
+        final pKey = CsvTool.toCamelCase(key);
+        resList.add('''    ${insertChar(pKey)}("$val"),''');
+      }
     }
     resList.add('''
 ;
@@ -41,14 +48,14 @@ class CsvEventTool {
 
   String insertChar(String str) {
     final position = str.length ~/ 2;
-    int length = Random().nextInt(str.length);
+    int length = Random().nextInt(str.isEmpty ? 3 : str.length);
     if (length < 3) length = 3;
     if (length > 5) length = 5;
     final charToInsert = generateRandomStringSecure(length);
     return str.substring(0, position) + charToInsert + str.substring(position);
   }
 
-  List<String> parseSwift(String projectName) {
+  List<String> parseSwift(String projectName, {bool isEvent = true}) {
     if (lines.isEmpty) return [];
     final idx = lines[0].split(',').indexOf(projectName);
     List<String> resList = ["enum MyEnum: String {"];
@@ -60,11 +67,18 @@ class CsvEventTool {
       }
       final fields = line.split(',');
       if (fields.length < 3) break;
-      final desc = fields[0];
-      final key = fields[1];
-      final val = fields[idx];
-      resList.add(
-          '''    case ${insertChar(CsvTool.toCamelCase(key))} = "$val" // $desc''');
+      if (isEvent) {
+        final desc = fields[0];
+        final key = fields[1];
+        final val = fields[idx];
+        resList.add(
+            '''    case ${insertChar(CsvTool.toCamelCase(key))} = "$val" // $desc''');
+      } else {
+        final key = fields[0];
+        final val = fields[idx];
+        resList.add(
+            '''    case ${insertChar(CsvTool.toCamelCase(key))} = "$val"''');
+      }
     }
     resList.add('''
 }
@@ -72,7 +86,7 @@ class CsvEventTool {
     return resList;
   }
 
-  List<String> parseKotlin(String projectName) {
+  List<String> parseKotlin(String projectName, {bool isEvent = true}) {
     if (lines.isEmpty) return [];
     final idx = lines[0].split(',').indexOf(projectName);
     List<String> resList = ["enum class MyEnum(val desc: String) {"];
@@ -84,11 +98,17 @@ class CsvEventTool {
       }
       final fields = line.split(',');
       if (fields.length < 3) break;
-      final desc = fields[0];
-      final key = fields[1];
-      final val = fields[idx];
-      resList.add(
-          '''    ${insertChar(CsvTool.toCamelCase(key))}("$val"), // $desc''');
+      if (isEvent) {
+        final desc = fields[0];
+        final key = fields[1];
+        final val = fields[idx];
+        resList.add(
+            '''    ${insertChar(CsvTool.toCamelCase(key))}("$val"), // $desc''');
+      } else {
+        final key = fields[0];
+        final val = fields[idx];
+        resList.add('''    ${insertChar(CsvTool.toCamelCase(key))}("$val"),''');
+      }
     }
     final last = resList.removeLast().replaceAll(",", ";");
     resList.add(last);
