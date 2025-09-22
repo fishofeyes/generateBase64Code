@@ -34,7 +34,7 @@ class CsvEventTool {
         final key = fields[0];
         final val = fields[idx];
         final pKey = CsvTool.toCamelCase(key);
-        resList.add('''    ${insertChar(pKey)}("$val"),''');
+        resList.add('''    ${insertChar(pKey)}("$val"), // $key''');
       }
     }
     resList.add('''

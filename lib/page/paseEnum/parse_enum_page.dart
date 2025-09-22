@@ -1,6 +1,3 @@
-import 'dart:ffi';
-import 'dart:io';
-
 import 'package:custom_base64/tool/csv_event.dart';
 import 'package:custom_base64/tool/global.dart';
 import 'package:desktop_drop/desktop_drop.dart';

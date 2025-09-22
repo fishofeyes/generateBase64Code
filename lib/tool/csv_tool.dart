@@ -62,6 +62,9 @@ class CsvTool {
           .putIfAbsent(normalApi, () => <String, dynamic>{})
           .putIfAbsent(type, () => <String, dynamic>{});
       content[token1] = replaceToken;
+      if (token1.contains("/")) {
+        content[token1.split("/").last] = replaceToken;
+      }
       if (token2 != token1) {
         content[token2] = replaceToken;
       }
