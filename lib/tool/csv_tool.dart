@@ -49,7 +49,8 @@ class CsvTool {
         idxType = fields.indexWhere((e) => e == "type" || e == "param_type");
         continue;
       }
-      final normalApi = fields[0].replaceAll(RegExp(r'\/\{[^}]*\}'), '');
+      String normalApi = fields[0].replaceAll(RegExp(r'\/\{[^}]*\}'), '');
+      if (normalApi.isEmpty || normalApi == "\\N") normalApi = "AdHoc";
       final token1 = fields[idxToken].replaceFirst("/", '');
       final token2 = toCamelCase(fields[idxToken]).replaceFirst('/', "");
 
@@ -99,8 +100,8 @@ class CsvTool {
   /// modelPath: model结果路径
   List<String> createDartModel(
       {required List<String> fileContent, required String apiPath}) {
-    final resMap =
-        csvMap[apiPath][apiPath == "\\N" ? "ADHOC" : "JSON_PROPERTY"];
+    final resMap = csvMap[apiPath]
+        [(apiPath == "\\N" || apiPath == "AdHoc") ? "ADHOC" : "JSON_PROPERTY"];
     final replaceContent = <String>[];
     for (String t in fileContent) {
       if (t.contains("'") || t.contains("\"")) {
@@ -134,8 +135,8 @@ class CsvTool {
 
   List<String> reverseDartModel(
       {required List<String> fileContent, required String apiPath}) {
-    final resMap =
-        csvReverseMap[apiPath][apiPath == "\\N" ? "ADHOC" : "JSON_PROPERTY"];
+    final resMap = csvReverseMap[apiPath]
+        [(apiPath == "\\N" || apiPath == "AdHoc") ? "ADHOC" : "JSON_PROPERTY"];
     final replaceContent = <String>[];
     for (String t in fileContent) {
       if (t.contains("'") || t.contains("\"")) {
