@@ -83,15 +83,11 @@ class CsvTool {
   }
 
   static String replaceAllQuotedContent(String text, String replacement) {
-    return text.replaceAllMapped(RegExp(r'"([^"]*)"'), (match) {
-      return '"$replacement"';
-    });
+    return text.replaceFirst(RegExp(r'"[^"]*"'), '"$replacement"');
   }
 
   static String replaceAllQuotedContent2(String text, String replacement) {
-    return text.replaceAllMapped(RegExp(r"'([^']*)'"), (match) {
-      return "'$replacement'";
-    });
+    return text.replaceFirst(RegExp(r"'[^']*'"), "'$replacement'");
   }
 
   ///
