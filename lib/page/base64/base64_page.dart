@@ -16,14 +16,16 @@ class Base64Page extends StatefulWidget {
 class _Base64PageState extends State<Base64Page>
     with AutomaticKeepAliveClientMixin {
   String result = "";
-  String randomStr = "";
+  String decodeResult = "";
   String useStr = "";
   String useDetailStr = "";
   final TextEditingController _inputController = TextEditingController();
   final TextEditingController _lengthVC = TextEditingController();
+  final TextEditingController _randomVc = TextEditingController();
   final ascCode = const AsciiCodec();
   List<String> randomList = [];
   CodeEnum intTab = CodeEnum.dart; // 0: dart 1: swift, 2: kotlin
+  bool isEncode = true;
   @override
   void initState() {
     super.initState();
@@ -33,14 +35,26 @@ class _Base64PageState extends State<Base64Page>
   void dispose() {
     _inputController.dispose();
     _lengthVC.dispose();
+    _randomVc.dispose();
     super.dispose();
   }
 
+  void _base64Encode() {
+    isEncode = true;
+    final i = _inputController.text;
+    final str = base64Encode(utf8.encode(i));
+    setState(() {
+      result = str;
+    });
+  }
+
   void _convert() {
-    if (randomStr.isEmpty) {
+    isEncode = true;
+    if (randomList.isEmpty) {
       _generateStr();
     }
-    final String t = randomStr;
+    final randomStr = _randomVc.text;
+    final String t = _randomVc.text;
     final i = _inputController.text;
     final str = base64Encode(utf8.encode(i));
     final length = str.length;
@@ -69,6 +83,13 @@ class _Base64PageState extends State<Base64Page>
     });
   }
 
+  void _decode() {
+    isEncode = false;
+    decodeResult = utf8.decode(
+        base64Decode(_inputController.text.replaceAll(_randomVc.text, "")));
+    setState(() {});
+  }
+
   void _copy(String text) {
     myCopy(context, text);
   }
@@ -80,7 +101,7 @@ class _Base64PageState extends State<Base64Page>
       final str = generateRandomStringSecure(int.tryParse(_lengthVC.text) ?? 0);
       randomList.add(str);
     }
-    randomStr = randomList.first;
+    _randomVc.text = randomList.first;
     setState(() {});
   }
 
@@ -92,15 +113,6 @@ class _Base64PageState extends State<Base64Page>
         padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
         child: Column(
           children: [
-            const Text(
-              "Randomly insert characters",
-              style: TextStyle(
-                fontSize: 20,
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 20),
             Expanded(
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -141,10 +153,8 @@ class _Base64PageState extends State<Base64Page>
                             child: Row(
                               children: [
                                 const Text("Random string: "),
-                                Text(
-                                  randomStr,
-                                  style: const TextStyle(
-                                      fontSize: 18, color: Colors.red),
+                                Expanded(
+                                  child: TextField(controller: _randomVc),
                                 ),
                               ],
                             ),
@@ -158,7 +168,7 @@ class _Base64PageState extends State<Base64Page>
                                     TextButton(
                                       onPressed: () {
                                         setState(() {
-                                          randomStr = e;
+                                          _randomVc.text = e;
                                         });
                                       },
                                       child: SizedBox(
@@ -187,18 +197,61 @@ class _Base64PageState extends State<Base64Page>
                             hintText: "Paste content",
                           ),
                           const SizedBox(height: 12),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: InkWell(
+                                  onTap: _convert,
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      "insert random str base64 encode",
+                                      style: TextStyle(color: Colors.white),
+                                      textAlign: TextAlign.center,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: 20),
+                              Expanded(
+                                child: InkWell(
+                                  onTap: _base64Encode,
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: 44,
+                                    decoration: BoxDecoration(
+                                      color: Colors.green,
+                                      borderRadius: BorderRadius.circular(12),
+                                    ),
+                                    alignment: Alignment.center,
+                                    child: const Text(
+                                      "base64 encode",
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
                           InkWell(
-                            onTap: _convert,
+                            onTap: _decode,
                             child: Container(
                               width: double.infinity,
                               height: 44,
                               decoration: BoxDecoration(
-                                color: Colors.green,
+                                color: Colors.redAccent,
                                 borderRadius: BorderRadius.circular(12),
                               ),
                               alignment: Alignment.center,
                               child: const Text(
-                                "submit",
+                                "decode",
                                 style: TextStyle(color: Colors.white),
                               ),
                             ),
@@ -220,7 +273,30 @@ class _Base64PageState extends State<Base64Page>
                           ),
                         ),
                         Visibility(
-                          visible: result.isNotEmpty,
+                          visible: !isEncode,
+                          child: Row(
+                            children: [
+                              Flexible(
+                                child: Text(
+                                  decodeResult,
+                                  style: const TextStyle(
+                                      fontSize: 12, color: Colors.black),
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 100,
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () => _copy(decodeResult),
+                                child: const Icon(
+                                  Icons.copy,
+                                  color: Colors.black,
+                                ),
+                              )
+                            ],
+                          ),
+                        ),
+                        Visibility(
+                          visible: result.isNotEmpty && isEncode,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
