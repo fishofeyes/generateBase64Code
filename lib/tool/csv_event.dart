@@ -48,9 +48,7 @@ class CsvEventTool {
 
   String insertChar(String str) {
     final position = str.length ~/ 2;
-    int length = Random().nextInt(str.isEmpty ? 3 : str.length);
-    if (length < 3) length = 3;
-    if (length > 5) length = 5;
+    int length = Random().nextInt(10) + 5;
     final charToInsert = generateRandomStringSecure(length);
     return str.substring(0, position) + charToInsert + str.substring(position);
   }
