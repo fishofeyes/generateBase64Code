@@ -171,6 +171,9 @@ class _ParseEnumPageState extends State<ParseEnumPage>
                           setState(() {
                             isEvent = e!;
                           });
+                          if (currProjectName.isNotEmpty) {
+                            _onSelect(currProjectName);
+                          }
                         },
                         groupValue: isEvent,
                         child: const Row(

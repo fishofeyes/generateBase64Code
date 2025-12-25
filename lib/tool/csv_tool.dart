@@ -55,7 +55,11 @@ class CsvTool {
       final token2 = toCamelCase(fields[idxToken]).replaceFirst('/', "");
 
       final replaceToken = fields[idxReplace];
-      final type = fields[idxType];
+      String type = fields[idxType];
+      if (type == "IDENTITY") {
+        type = "ADHOC";
+      }
+      print("-=-=-=$type");
       csvReverseMap
           .putIfAbsent(normalApi, () => <String, dynamic>{})
           .putIfAbsent(type, () => <String, dynamic>{})[replaceToken] = token1;
@@ -298,9 +302,11 @@ class CsvTool {
           if (obj != null) {
             if (newString.contains("''") || newString.contains('""')) {
               if (isSingle) {
-                contents.add(newString.replaceAll("''", "'${obj['obs']}'"));
+                contents.add(
+                    "${newString.replaceAll("''", "'${obj['obs']}'")} // ${key}");
               } else {
-                contents.add(newString.replaceAll('""', '"${obj['obs']}"'));
+                contents.add(
+                    "${newString.replaceAll('""', '"${obj['obs']}"')} // ${key}");
               }
             } else {
               contents.add('$newString;//${obj['obs']}');
