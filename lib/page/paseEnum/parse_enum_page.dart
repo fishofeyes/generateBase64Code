@@ -35,38 +35,40 @@ class _ParseEnumPageState extends State<ParseEnumPage>
   }
 
   void _initCsv() async {
-    if (_list.isNotEmpty) {
-      final f = _list.first;
-      if (f.name.toLowerCase().endsWith("csv") == false) {
-        _list = [];
-        showDialog(
-            context: context,
-            builder: (c) {
-              return AlertDialog(
-                title: const Text("Only support csv file"),
-                content: TextButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
-                  child: const Text("OK"),
-                ),
-              );
-            });
-        return;
-      }
-      // final p = File(f.path);
-      // final lines = await p.readAsLines();
-      final p = await f.readAsString();
-      final lines = p.split("\n");
-      tool.init(lines);
-      if (lines.isNotEmpty) {
-        final temp = lines.first.split(",");
-        temp.removeAt(0);
-        temp.removeAt(0);
-        data = temp.where((e) => e.isNotEmpty).toList();
-      }
-      setState(() {});
+    final f = _list.first;
+    if (f.name.toLowerCase().endsWith("csv") == false) {
+      _list = [];
+      showDialog(
+          context: context,
+          builder: (c) {
+            return AlertDialog(
+              title: const Text("Only support csv file"),
+              content: TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: const Text("OK"),
+              ),
+            );
+          });
+      return;
     }
+    // final p = File(f.path);
+    // final lines = await p.readAsLines();
+    final p = await f.readAsString();
+    final lines = p.split("\n");
+    tool.init(lines);
+    if (lines.isNotEmpty) {
+      final temp = lines.first.split(",");
+      if (isEvent) {
+        temp.removeAt(0);
+        temp.removeAt(0);
+      } else {
+        temp.removeAt(0);
+      }
+      data = temp.where((e) => e.isNotEmpty).toList();
+    }
+    setState(() {});
   }
 
   void _onSelect(String? e) {
