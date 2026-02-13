@@ -14,11 +14,14 @@ class CsvTool {
     int replaceTokenIdx = 0;
     for (final line in lines) {
       final fields = line.split(',');
+      int idx = 0;
       if (fields.length < 3) {
-        continue;
+        idx = 0;
+      } else {
+        idx = 1;
       }
-      String api = fields[1].replaceAll(RegExp(r'\/\{[^}]*\}'), '');
-      String obs = fields[2];
+      String api = fields[idx].replaceAll(RegExp(r'\/\{[^}]*\}'), '');
+      String obs = fields[idx + 1];
       if (replaceTokenIdx == 0) {
         replaceTokenIdx = fields.indexWhere((e) => e == "api_replace_token");
         if (replaceTokenIdx == -1) {
