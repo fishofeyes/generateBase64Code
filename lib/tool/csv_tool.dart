@@ -20,6 +20,7 @@ class CsvTool {
       } else {
         idx = 1;
       }
+      if (idx + 1 >= fields.length) continue;
       String api = fields[idx].replaceAll(RegExp(r'\/\{[^}]*\}'), '');
       String obs = fields[idx + 1];
       if (replaceTokenIdx == 0) {
