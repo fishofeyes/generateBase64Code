@@ -94,9 +94,9 @@ class CsvTool {
     return text.replaceFirst(RegExp(r'"[^"]*"'), '"$replacement"');
   }
 
-  static String replaceAllQuotedContent2(String text, String replacement) {
-    return text.replaceFirst(RegExp(r"'[^']*'"), "'$replacement'");
-  }
+  // static String replaceAllQuotedContent2(String text, String replacement) {
+  //   return text.replaceFirst(RegExp(r"'[^']*'"), "'$replacement'");
+  // }
 
   ///
   /// model 解析混淆
@@ -110,15 +110,20 @@ class CsvTool {
     for (String t in fileContent) {
       if (t.contains("'") || t.contains("\"")) {
         String key = extractQuotedContent(t).first;
+        t = t.replaceAll("'", '"');
         final replace = resMap[key];
         if (replace == null) {
           t = "$t // 未处理";
         } else {
-          if (t.contains("'")) {
-            t = CsvTool.replaceAllQuotedContent2(t, replace);
-          } else {
-            t = CsvTool.replaceAllQuotedContent(t, replace);
-          }
+          // if (t.contains("'")) {
+          //   t = CsvTool.replaceAllQuotedContent2(t, replace);
+          // } else {
+          t = CsvTool.replaceAllQuotedContent(t, replace);
+          // }
+        }
+        if ("$replace".contains("/") && t.contains(":") && t.startsWith('"')) {
+          final tarr = t.split(":");
+          t = buildNestedJsonString(replace, tarr.last.trim());
         }
         replaceContent.add(t);
       } else if (t.contains("\":")) {
@@ -137,23 +142,48 @@ class CsvTool {
     return replaceContent;
   }
 
+  String buildNestedJsonString(String pathKey, String valueExpression) {
+    // 1. 清理路径：移除开头和结尾的斜杠，并按斜杠分割
+    List<String> keys = pathKey
+        .replaceAll(RegExp(r'^/+|/+$'), '') // 移除开头和结尾的斜杠
+        .split('/')
+        .where((part) => part.isNotEmpty) // 过滤空的部分
+        .toList();
+
+    // 2. 检查路径是否有效
+    if (keys.isEmpty) {
+      throw ArgumentError('Invalid path key format: $pathKey');
+    }
+
+    // 3. 从最内层开始构建字符串
+    String innerMost = '"${keys.last}": $valueExpression';
+
+    // 4. 从内向外构建嵌套结构
+    for (int i = keys.length - 2; i >= 0; i--) {
+      innerMost = '"${keys[i]}": {$innerMost}';
+    }
+
+    return innerMost;
+  }
+
   List<String> reverseDartModel(
       {required List<String> fileContent, required String apiPath}) {
     final resMap = csvReverseMap[apiPath]
         [(apiPath == "\\N" || apiPath == "AdHoc") ? "ADHOC" : "JSON_PROPERTY"];
     final replaceContent = <String>[];
     for (String t in fileContent) {
+      t = t.replaceAll("'", '"');
       if (t.contains("'") || t.contains("\"")) {
         String key = extractQuotedContent(t).first;
         final replace = resMap[key];
         if (replace == null) {
           t = "$t // 未处理";
         } else {
-          if (t.contains("'")) {
-            t = CsvTool.replaceAllQuotedContent2(t, replace);
-          } else {
-            t = CsvTool.replaceAllQuotedContent(t, replace);
-          }
+          // if (t.contains("'")) {
+          //   t = CsvTool.replaceAllQuotedContent2(t, replace);
+          // } else {
+          t = CsvTool.replaceAllQuotedContent(t, replace);
+          // }
         }
         replaceContent.add(t);
       } else if (t.contains("\":")) {
